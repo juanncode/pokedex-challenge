@@ -32,13 +32,11 @@ android {
         properties.load(keystoreFile.inputStream())
         debug {
             applicationIdSuffix = ".staging"
-            resValue("string", "app_name", "@string/debug_name")
             val baseUrl = properties.getProperty("BASE_URL_D") ?: ""
 
             buildConfigField(type = "String", name = "BASE_URL", value = baseUrl)
         }
         release {
-            resValue("string", "app_name", "@string/prod_name")
             val baseUrl = properties.getProperty("BASE_URL") ?: ""
             buildConfigField(type = "String", name = "BASE_URL", value = baseUrl)
             isMinifyEnabled = false
@@ -78,6 +76,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -87,18 +86,19 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.hilt.navigation)
 
+    //retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okthttp3)
+    implementation(libs.okthttp3.interceptor)
+
+
     //hilt
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
     //coil
     implementation(libs.coil.compose)
-
-    //retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    implementation(libs.okthttp3)
-    implementation(libs.okthttp3.interceptor)
 
     //serialization
     implementation(libs.kotlin.serialization)
