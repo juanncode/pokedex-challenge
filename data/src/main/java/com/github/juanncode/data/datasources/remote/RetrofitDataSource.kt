@@ -1,9 +1,11 @@
 package com.github.juanncode.data.datasources.remote
 
 import com.github.juanncode.data.mappers.toDomain
+import com.github.juanncode.data.mappers.toEntity
 import com.github.juanncode.data.retrofit.ApiService
 import com.github.juanncode.data.util.safeApiCall
 import com.github.juanncode.domain.Pokemon
+import com.github.juanncode.domain.PokemonDetail
 import com.github.juanncode.domain.utils.Resource
 import javax.inject.Inject
 
@@ -13,6 +15,12 @@ class RetrofitDataSource @Inject constructor(
     override suspend fun fetchPokemons(): Resource<List<Pokemon>> {
         return safeApiCall {
             apiService.fetchPokemons().results.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun getPokemonDetail(id: Int): Resource<PokemonDetail> {
+        return safeApiCall {
+            apiService.getPokemonDetail(id).toEntity()
         }
     }
 }

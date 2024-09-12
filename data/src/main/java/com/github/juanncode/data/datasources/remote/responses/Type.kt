@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class Type(
     val slot: Int,
-    val type: TypeX
+    val type: com.github.juanncode.data.datasources.remote.responses.TypeX
 )

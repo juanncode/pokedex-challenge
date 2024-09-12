@@ -19,6 +19,6 @@ data class Sprites(
     val frontShiny: String,
     @SerializedName("front_shiny_female")
     val frontShinyFemale: Any,
-    val other: Other,
-    val versions: Versions
+    val other: com.github.juanncode.data.datasources.remote.responses.Other,
+    val versions: com.github.juanncode.data.datasources.remote.responses.Versions
 )

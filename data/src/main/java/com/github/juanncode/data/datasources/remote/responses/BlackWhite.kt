@@ -5,7 +5,7 @@ import com.github.juanncode.data.datasources.remote.responses.Animated
 import com.google.gson.annotations.SerializedName
 
 data class BlackWhite(
-    val animated: Animated,
+    val animated: com.github.juanncode.data.datasources.remote.responses.Animated,
     @SerializedName("back_default")
     val backDefault: String,
     @SerializedName("back_female")

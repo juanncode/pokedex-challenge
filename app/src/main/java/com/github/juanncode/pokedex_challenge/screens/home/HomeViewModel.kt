@@ -1,8 +1,10 @@
 package com.github.juanncode.pokedex_challenge.screens.home
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.juanncode.domain.repository.PokemonRepository
@@ -22,8 +24,26 @@ class HomeViewModel @Inject constructor(
         private set
 
     init {
+
+        viewModelScope.launch {
+            snapshotFlow {
+                state.textFieldState.text
+            }.collect {
+                state = if (it.isEmpty()) {
+                    state.copy(pokemons = state.backupPokemons)
+                } else {
+                    state.copy(
+                        pokemons = state.backupPokemons.filter { pok ->
+                            pok.name.contains(it.toString())
+                        }.toList()
+                    )
+                }
+
+            }
+        }
+
         repository.getPokemons().onEach {
-            state = state.copy(pokemons = it)
+            state = state.copy(pokemons = it, backupPokemons = it)
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
@@ -38,12 +58,8 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(event: HomeEvent) {
         when (event) {
-            HomeEvent.Refresh -> {
-//                fetchPokemons()
-            }
-
             HomeEvent.CleanError -> state = state.copy(error = null)
-
+            HomeEvent.ClearText -> state = state.copy(textFieldState = TextFieldState())
         }
     }
 

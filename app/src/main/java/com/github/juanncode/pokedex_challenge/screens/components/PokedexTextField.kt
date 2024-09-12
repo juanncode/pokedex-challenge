@@ -6,6 +6,7 @@ package com.github.juanncode.pokedex_challenge.screens.components
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ fun PokedexTextField(
     state: TextFieldState,
     endIcon: ImageVector?,
     startIcon: ImageVector?,
+    onClickEndIcon: () -> Unit = {},
     hint: String,
     keyboardType: KeyboardType = KeyboardType.Text,
 ) {
@@ -72,6 +74,7 @@ fun PokedexTextField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType
             ),
+
             lineLimits = TextFieldLineLimits.SingleLine,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
             modifier = Modifier
@@ -88,7 +91,7 @@ fun PokedexTextField(
                     color = if (isFocused) {
                         MaterialTheme.colorScheme.primary
                     } else {
-                        Color.Transparent
+                        MaterialTheme.colorScheme.secondary
                     },
                     shape = RoundedCornerShape(16.dp)
                 )
@@ -115,7 +118,7 @@ fun PokedexTextField(
                             Text(
                                 text = hint,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                    alpha = 0.4f
+                                    alpha = 0.6f
                                 ),
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -129,6 +132,9 @@ fun PokedexTextField(
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
+                                .clickable {
+                                    onClickEndIcon()
+                                }
                                 .padding(end = 8.dp)
                         )
                     }

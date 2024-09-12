@@ -3,6 +3,7 @@ package com.github.juanncode.data.repository
 import com.github.juanncode.data.datasources.local.LocalDataSource
 import com.github.juanncode.data.datasources.remote.RemoteDataSource
 import com.github.juanncode.domain.Pokemon
+import com.github.juanncode.domain.PokemonDetail
 import com.github.juanncode.domain.repository.PokemonRepository
 import com.github.juanncode.domain.utils.Resource
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +29,10 @@ class PokemonRepositoryImpl @Inject constructor(
             }
         }
 
+    }
+
+    override suspend fun fetchPokemon(id: Int): Resource<PokemonDetail> {
+        return remoteDataSource.getPokemonDetail(id)
     }
 
 }

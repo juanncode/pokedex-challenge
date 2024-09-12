@@ -9,8 +9,8 @@ interface ApiService {
     @GET("api/v2/pokemon?limit=150")
     suspend fun fetchPokemons(): PokemonResponse
 
-    @GET("api/v2/pokemon/{name}")
+    @GET("api/v2/pokemon/{id}")
     suspend fun getPokemonDetail(
-        @Path("name") name: String
-    ): PokemonDetailDto
+        @Path("id") id: Int
+    ): com.github.juanncode.data.datasources.remote.responses.PokemonDetailDto
 }

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Other(
     @SerializedName("dream_world")
-    val dreamWorld: DreamWorld,
+    val dreamWorld: com.github.juanncode.data.datasources.remote.responses.DreamWorld,
     @SerializedName("official-artwork")
-    val officialArtwork: OfficialArtwork
+    val officialArtwork: com.github.juanncode.data.datasources.remote.responses.OfficialArtwork
 )

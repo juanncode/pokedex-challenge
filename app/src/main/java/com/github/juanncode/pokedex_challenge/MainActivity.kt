@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.github.juanncode.pokedex_challenge.config.AppRouter
 import com.github.juanncode.pokedex_challenge.screens.detail.DetailScreen
+import com.github.juanncode.pokedex_challenge.screens.detail.DetailViewModel
 import com.github.juanncode.pokedex_challenge.screens.home.HomeScreen
 import com.github.juanncode.pokedex_challenge.screens.home.HomeViewModel
 import com.github.juanncode.pokedex_challenge.ui.theme.PokedexchallengeTheme
@@ -42,9 +43,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable<AppRouter.HomeRoute> {
                             val viewModel = hiltViewModel<HomeViewModel>()
-                            val state = viewModel.state
                             HomeScreen(
-                                state = state,
+                                state = viewModel.state,
                                 onEvent = {
                                     viewModel.onEvent(it)
                                 },
@@ -53,7 +53,15 @@ class MainActivity : ComponentActivity() {
                         }
                         composable<AppRouter.DetailRoute> {
                             val args = it.toRoute<AppRouter.DetailRoute>()
-                            DetailScreen(value = args.id)
+                            val viewModel = hiltViewModel<DetailViewModel>()
+                            DetailScreen(
+                                state = viewModel.state,
+                                onEvent = {
+                                    viewModel.onEvent(it)
+                                },
+                                navController = navController,
+                                value = args.id
+                            )
                         }
                     }
                 }

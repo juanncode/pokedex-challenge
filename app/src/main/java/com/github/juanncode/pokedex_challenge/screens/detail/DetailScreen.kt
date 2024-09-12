@@ -2,14 +2,14 @@
 
 package com.github.juanncode.pokedex_challenge.screens.detail
 
-import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.CircularProgressIndicator
@@ -17,34 +17,44 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.SubcomposeAsyncImage
 import com.github.juanncode.pokedex_challenge.screens.components.PokedexToolbar
 import com.github.juanncode.pokedex_challenge.screens.detail.components.ItemDetail
-import com.github.juanncode.pokedex_challenge.ui.theme.PokedexBlue
-import com.github.juanncode.pokedex_challenge.ui.theme.PokedexBlue30
 import com.github.juanncode.pokedex_challenge.ui.theme.PokedexchallengeTheme
 
 @Composable
-fun DetailScreen(modifier: Modifier = Modifier, value: Int) {
-    val configuration = LocalConfiguration.current
-    val density = LocalDensity.current
+fun DetailScreen(
+    state: DetailState,
+    onEvent: (DetailEvent) -> Unit,
+    navController: NavController,
+    value: Int
+) {
+    val context = LocalContext.current
+    LaunchedEffect(key1 = value) {
+        onEvent(DetailEvent.GetPokemon(value))
+    }
 
-    val screenWidthPx = with(density) {
-        configuration.screenWidthDp.dp.roundToPx()
+    LaunchedEffect(key1 = state.error) {
+        if (state.error != null) {
+            Toast.makeText(
+                context,
+                state.error.message,
+                Toast.LENGTH_LONG
+            ).show()
+            onEvent(DetailEvent.CleanError)
+
+        }
     }
 
     Scaffold(
@@ -57,33 +67,58 @@ fun DetailScreen(modifier: Modifier = Modifier, value: Int) {
                 startContent = {
                     Icon(imageVector = Icons.Default.Face, contentDescription = null)
                 },
-                showBackButton = true
+                showBackButton = true,
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
     ) {
 
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(it)
 
         ) {
-            Column(
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SubcomposeAsyncImage(
-                    model = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(220.dp),
-                    contentDescription = "pokemon",
-                    loading = { CircularProgressIndicator(modifier = Modifier.size(25.dp)) }
-                )
-                ItemDetail(title = "Tipo", value = "Fuego")
-                ItemDetail(title = "Tipo", value = "Fuego")
-                ItemDetail(title = "Tipo", value = "Fuego")
-            }
+                item {
+                    SubcomposeAsyncImage(
+                        model = state.pokemon?.url,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(220.dp),
+                        contentDescription = "pokemon",
+                        loading = { CircularProgressIndicator(modifier = Modifier.size(25.dp)) }
+                    )
+                }
+                item {
+                    state.pokemon?.types?.map {
+                        ItemDetail(title = "Tipo", value = it)
+                    }
+                }
+                item {
+                    state.pokemon?.abilities?.map {
+                        ItemDetail(title = "Habilidades", value = it)
+                    }
+                }
 
+            }
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Color.Gray.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.inversePrimary
+                    )
+                }
+            }
         }
     }
 }
@@ -92,6 +127,13 @@ fun DetailScreen(modifier: Modifier = Modifier, value: Int) {
 @Composable
 private fun PreviewDetailScreen() {
     PokedexchallengeTheme {
-        DetailScreen(value = 3)
+        DetailScreen(
+            onEvent = {
+
+            },
+            state = DetailState(),
+            navController = rememberNavController(),
+            value = 3
+        )
     }
 }
